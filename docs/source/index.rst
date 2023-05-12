@@ -4,18 +4,18 @@
    contain the root `toctree` directive.
 
 Welcome to PyPPI's documentation!
-====================================
+======================================
 
 Date: May 1, 2023. Version: 0.1.0
 
 paper:  Will born.
 
-Citing Us:
+Citing Us: 
 
 If you find PyPPI helpful in your work or research, we would greatly appreciate citations to the following paper
 
 :: 
-   
+
    put the bib here
 
 .. toctree::
@@ -34,7 +34,8 @@ If you find PyPPI helpful in your work or research, we would greatly appreciate 
 
 .. toctree::
    :maxdepth: 2
-   :caption: EXAMPLES 
+   :caption: EXAMPLES
    
-   Examples.rst   
+   basic_usage.rst
    featureGeneration_examples.rst
+   featureSelection_examples.rst
