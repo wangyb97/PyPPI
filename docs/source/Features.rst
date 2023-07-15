@@ -108,7 +108,9 @@ PyPPI.Features
         
             Used to determine the ``RSA`` feature shape, can be set to any meaningful value. The default value is 1.
     
-    .. note:: The calculation methods of ``dssp`` and ``RSA`` are different, so the shape dimension is different, but the generated features are both protein structural features. So set one of them to true.
+    .. note:: The calculation methods of ``dssp`` and ``RSA`` are different, so the shape dimension is different, but the generated features are both protein structural features. So set one of them to true. 
+        
+        And ``dssp`` only suppose the datasets of seq_186.fasta and seq_164.fasta.
 
 .. py:method:: PyPPI.Features.generateLanguageModelFeatures(model='ProtT5')
 

@@ -1,48 +1,55 @@
 Feature selection examples
 ================================
 
-The PyRBP integrates several feature selection methods and provides a simple interface, which requires only the features to be selected, the dataset label, and the number of features you want to selected.
+The PyPPI integrates several feature selection methods and provides a simple interface, which requires only the features to be selected, the dataset label, and the number of features you want to selected.
 
 Importing related modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: py
 
-    from PyRBP.filesOperation import read_fasta_file, read_label
-    from PyRBP.Features import generateStaticLMFeatures, generateStructureFeatures, generateBPFeatures
-    from PyRBP.featureSelection import cife # Here we use cife method as an example.
+    from PyPPI.filesOperation import getLabel
+    from PyPPI.Features import generateStructureFeatures, generateBIOFeatures, generatePhysChemFeatures, generateLanguageModelFeatures
+    from PyPPI.featureSelection import cife # Here we use cife method as an example.
 
 Prepare three types of features for feature selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The AGO1 dataset is used to generate biological features, semantic information and secondary structure information respectively.
+The example uses the seq_72.fasta dataset.
 
 .. code-block:: py
 
-    fasta_path = '/home/wangyansong/PyRBP/src/RNA_datasets/circRNAdataset/AGO1/seq'
-    label_path = '/home/wangyansong/PyRBP/src/RNA_datasets/circRNAdataset/AGO1/label'
+    # Set the fasta file path of the protein sequence
+    # Edit bashrc file: vim ~/.bashrc
+    export INPUT_FN=/home/wangyansong/wangyubo/PyPPI/datasets/seq_72.fasta
 
-    sequences = read_fasta_file(fasta_path)  # read sequences and labels from given path
-    label = read_label(label_path)
+    # Set the label file path of the protein sequence
+    label=getLabel(label_npy='datasets/label_72.npy')
 
     # generate biological features
-    biological_features = generateBPFeatures(sequences, PGKM=True)
-    print(biological_features.shape)
+    bioFeature=generateBIOFeatures(ECO=True, HSP=True, RAA=True, Pro2Vec_1D=True, PSSM=True, Anchor=True, windowSize=25)
+    print('bioFeature:',bioFeature.shape)
 
-    # generate static semantic information
-    static_semantic_information = generateStaticLMFeatures(sequences, kmer=3, model='/home/wangyansong/PyRBP/src/staticRNALM/circleRNA/circRNA_3mer_fasttext')
-    print(static_semantic_information.shape)
+    # generate physical and chemical information
+    PhysChemFeatures=generatePhysChemFeatures(HYD=True, PHY_Prop=True, PKA=True, PHY_Char=True, windowSize=25)
+    print('PhysChemFeatures:',PhysChemFeatures.shape)
 
-    # generate secondary structure information
-    structure_features = generateStructureFeatures(fasta_path, script_path='/home/wangyansong/PyRBP/RNAplfold', basic_path='/home/wangyansong/PyRBP/src/circRNAdatasetAGO1', W=101, L=70, u=1)
-    print(structure_features.shape)
+    # generate structural Information
+    structuralFeatures=generateStructuralFeatures(RSA=True)
+    print('structuralFeatures:',structuralFeatures.shape)
+
+    # generate semantic Information
+    dynamicFeatures = generateLanguageModelFeatures(model='ProtT5')
+    print('dynamicFeatures:',dynamicFeatures.shape)
+
 
 output:
     ::
 
-        (34636, 400)
-        (34636, 99, 100)
-        (34636, 101, 5)
+        bioFeature: (18140, 25, 25)
+        PhysChemFeatures: (18140, 25, 12)
+        structuralFeatures: (18140, 25, 1)
+        dynamicFeatures: (1, 18140, 1024)
 
 Feature selection procedure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,58 +60,57 @@ It should be noted that the feature dimension to be passed into the feature sele
 
     # The first method of dimensionality reduction: multiplying the last two dimensions.
     print('-------------------first method------------------------')
-    static_semantic_information_1 = np.reshape(static_semantic_information, (static_semantic_information.shape[0], static_semantic_information.shape[1] * static_semantic_information.shape[2]))
-    print(static_semantic_information_1.shape)
+    bioFeature_2D_1 = np.reshape(bioFeature, (bioFeature.shape[0], bioFeature.shape[1] * bioFeature.shape[2]))
+    print(bioFeature_2D_1.shape)
 
-    structure_features_1 = np.reshape(structure_features, (structure_features.shape[0], structure_features.shape[1] * structure_features.shape[2]))
-    print(structure_features_1.shape)
+    PhysChemFeatures_2D_1 = np.reshape(PhysChemFeatures, (PhysChemFeatures.shape[0], PhysChemFeatures.shape[1] * PhysChemFeatures.shape[2]))
+    print(PhysChemFeatures_2D_1.shape)
 
     # The second method of dimensionality reduction: sum operation according to one of the last two dimensions.
     print('------------------second method-----------------------')
     print('----------compress the third dimension----------------')
-    static_semantic_information_2 = np.sum(static_semantic_information, axis=1)
-    print(static_semantic_information_2.shape)
-    static_semantic_information_3 = np.sum(static_semantic_information, axis=2)
-    print(static_semantic_information_3.shape)
+    bioFeature_2D_2 = np.sum(bioFeature, axis=2)
+    print(bioFeature_2D_2.shape)
+    PhysChemFeatures_2D_2 = np.sum(PhysChemFeatures, axis=2)
+    print(PhysChemFeatures_2D_2.shape)
 
     print('---------compress the second dimension----------------')
-    structure_features_2 = np.sum(structure_features, axis=1)
-    print(structure_features_2.shape)
-    structure_features_3 = np.sum(structure_features, axis=2)
-    print(structure_features_3.shape)
+    bioFeature_2D_3 = np.sum(bioFeature, axis=1)
+    print(bioFeature_2D_3.shape)
+    PhysChemFeatures_2D_3 = np.sum(PhysChemFeatures, axis=1)
+    print(PhysChemFeatures_2D_3.shape)
+
 
 output:
     ::
 
         -------------------first method-----------------------
-        (34636, 9900)
-        (34636, 505)
+        (18140, 625)
+        (18140, 300)
         ------------------second method-----------------------
         ----------compress the third dimension----------------
-        (34636, 100)
-        (34636, 99)
+        (18140, 25)
+        (18140, 25)
         ---------compress the second dimension----------------
-        (34636, 5)
-        (34636, 101)
+        (18140, 25)
+        (18140, 12)
 
 Input the three processed features into the feature selection method for refinement (here we use the ``CIFE`` method as an example).
 
 .. code-block:: py
 
-    refined_biological_features = cife(biological_features, label, num_features=10)
+
+    refined_biological_features = cife(bioFeature_2D_1, label, num_features=10)
     print(refined_biological_features.shape)
 
-    refined_static_semantic_information = cife(static_semantic_information_1, label, num_features=10)
-    print(refined_static_semantic_information.shape)
-
-    refined_structure_features = cife(structure_features_1, label, num_features=10)
-    print(refined_structure_features.shape)
+    refined_PhysChem_features = cife(PhysChemFeatures_2D_1, label, num_features=10)
+    print(refined_PhysChem_features.shape)
+    
 
 output:
     ::
 
-        (34636, 10)
-        (34636, 10)
-        (34636, 10)
+        (18140, 10)
+        (18140, 10)
 
 .. note:: The calculation process of some feature selection methods is more complicated, so the running time is longer, please be patient.

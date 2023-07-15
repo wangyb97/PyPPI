@@ -5,10 +5,22 @@ Prerequisites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The following packages are requirements:
 
+- ``transformers==4.13.0.dev0``
+- ``dssp``
 - ``gensim``
 - ``glove``
-
-这里写requirement.txt里的包
+- ``gensim``
+- ``glove``
+- ``Keras``
+- ``matplotlib``
+- ``numpy``
+- ``scikit_learn``
+- ``seaborn``
+- ``shap``
+- ``tensorflow``
+- ``torch``
+- ``transformers``
+- ``yellowbrick``
 
 Install PyPPI dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +31,7 @@ Install PyPPI dependencies
     conda activate PyPPI
     git clone https://github.com/wangyb97/PyPPI.git
     cd PyPPI
-    pip install -r requirement.txt
+    pip install -r reqs.txt
     
     chmod +x chmodFiles.sh
     ./chmodFiles.sh
@@ -29,14 +41,14 @@ Set path in bashrc
 
 Use the following method to set PRO_DIR, INPUT_FN and TMP_DIR in bashrc, and replace the path with your own.
 
-Edit bashrc file: ``vim ~/.bashrc``
+Edit bashrc file: ``vi ~/.bashrc``
 
 ::
 
     # Set the project path
     export PRO_DIR=/home/wangyansong/wangyubo/PyPPI
     # Set the fasta file path of the protein sequence
-    export INPUT_FN=/home/wangyansong/wangyubo/PyPPI/datasets/seq_2.fasta
+    export INPUT_FN=/home/wangyansong/wangyubo/PyPPI/datasets/seq_72.fasta
     # Set folder path for temporary features
     export TMP_DIR=/home/wangyansong/wangyubo/PyPPI/feature_computation/txtFeatures
 
@@ -69,7 +81,7 @@ Set database
 
     tar zxvf uniprot20_2015_06.tgz -C specifiedPath # decompress to the specified path.
 
-Edit bashrc file: ``vim ~/.bashrc``, and replace the path with your own.
+Edit bashrc file: ``vi ~/.bashrc``, and replace the path with your own.
 
 ::
 
@@ -90,7 +102,7 @@ Make sure that g++, boost library and OpenMP is available on the system.
     git checkout DELPHI_Server
     make compute_HSPs_parallel
 
-Edit bashrc file: ``vim ~/.bashrc``
+Edit bashrc file: ``vi ~/.bashrc``
 
 ::
 
